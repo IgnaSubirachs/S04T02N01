@@ -1,59 +1,21 @@
-# S04T02N01 - Fruiteria API
+# 🍎 Fruit REST API - Sprint 4 Task 2 Level 1
 
-Spring Boot RESTful CRUD API to manage fruits, built as a backend learning exercise.  
-Includes input validation, global exception handling, unit testing with `MockMvc`, and in-memory persistence with H2 database.
-
----
-
-## 🧱 Technologies Used
-
-- Java 17+
-- Spring Boot 3.5
-- Spring Web
+This is a Spring Boot CRUD REST API to manage fruit entries. The application uses:
+- Spring Boot
 - Spring Data JPA
-- H2 Database
-- Maven or Gradle
-- JUnit + MockMvc
+- H2 in-memory database
+- Bean Validation
+- Global Exception Handling
+- JUnit and MockMvc for testing
 
 ---
 
-## 📦 Project Structure
+## 🚀 Endpoints
 
-```
-cat.itacademy.s04.t02.n01
-├── controllers           # FruitController: REST API endpoints
-├── dto                  # FruitRequest: input validation model
-├── exception            # ResourceNotFoundException + GlobalExceptionHandler
-├── model                # FruitModel: JPA entity
-├── repository           # FruitRepository: JPA interface
-├── services             # FruitService: business logic
-```
+### ➕ Add Fruit
+**POST** `/fruit/add`
 
----
-
-## 🚀 Running the Application
-
-1. Clone the repository
-2. Open it in IntelliJ IDEA or any compatible IDE
-3. Run the `S04T02N01Application.java` class
-4. Use Postman or browser to test the endpoints
-
----
-
-## 🧪 Available Endpoints
-
-| Method | Endpoint              | Description                     |
-|--------|------------------------|---------------------------------|
-| POST   | `/fruit/add`           | Create a new fruit              |
-| GET    | `/fruit/getAll`        | Retrieve all fruits             |
-| GET    | `/fruit/getOne/{id}`   | Retrieve a fruit by ID          |
-| PUT    | `/fruit/update/{id}`   | Update a fruit by ID            |
-| DELETE | `/fruit/delete/{id}`   | Delete a fruit by ID            |
-
----
-
-## 📄 JSON Example (POST / PUT)
-
+**Request Body:**
 ```json
 {
   "name": "Banana",
@@ -61,21 +23,79 @@ cat.itacademy.s04.t02.n01
 }
 ```
 
----
-
-## ✅ Input Validation
-
-- `name`: must not be blank (`@NotBlank`)
-- `kilogramQuantity`: must be a positive number (`@Positive`)
+**Success Response:**
+- Code: `201 CREATED`
+- Body: Saved fruit object
 
 ---
 
-## 🧠 Error Handling
+### 📋 Get All Fruits
+**GET** `/fruit/getAll`
 
-Input and runtime exceptions are handled globally with `@ControllerAdvice`.
+**Response:**
+- Code: `200 OK`
+- Body: List of fruits
 
-**Example response for 400 Bad Request:**
+---
 
+### 🔍 Get Fruit by ID
+**GET** `/fruit/getOne/{id}`
+
+**Response:**
+- Code: `200 OK`
+- Body: Fruit object
+
+---
+
+### ✏️ Update Fruit
+**PUT** `/fruit/update/{id}`
+
+**Request Body:**
+```json
+{
+  "name": "Pear",
+  "kilogramQuantity": 15
+}
+```
+
+**Success Response:**
+- Code: `200 OK`
+- Body: Updated fruit object
+
+---
+
+### 🗑️ Delete Fruit
+**DELETE** `/fruit/delete/{id}`
+
+**Success Response:**
+- Code: `200 OK`
+- Body: `"Fruit with id {id} deleted"`
+
+---
+
+## 🛑 Error Handling
+
+This API implements a global exception handler to manage errors gracefully and return meaningful HTTP responses.
+
+### Common Error Responses
+
+| HTTP Status | Description                       | Example Message                            |
+|-------------|-----------------------------------|--------------------------------------------|
+| `400`       | Validation or bad request error   | `{"name": "Name can't be empty"}`          |
+| `404`       | Resource not found                | `{"message": "Fruit with id 99 not found"}`|
+| `500`       | Internal server error             | `{"message": "Unexpected error occurred"}` |
+
+### Example Validation Errors
+
+POST `/fruit/add` with invalid body:
+```json
+{
+  "name": "",
+  "kilogramQuantity": -5
+}
+```
+
+Response:
 ```json
 {
   "name": "Name can't be empty",
@@ -85,42 +105,24 @@ Input and runtime exceptions are handled globally with `@ControllerAdvice`.
 
 ---
 
-## 🧪 Testing
+## ✅ Test Coverage
 
-- API tests implemented using `MockMvc`
-- Includes tests for:
-    - Success cases (`201 Created`)
-    - Validation errors (`400 Bad Request`)
-    - Not found errors (`404 Not Found`)
+This application is covered with unit tests using JUnit and MockMvc:
+
+- ✅ Create fruit (valid & invalid)
+- ✅ Get fruit by ID (existing & not found)
+- ✅ Update fruit
+- ✅ Delete fruit
+- ✅ Global exception handling
 
 ---
 
-## 💾 H2 Database Access
+## 🧪 H2 Console
 
-- Console URL: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+Access the H2 web console at:
+
+- URL: `http://localhost:8080/h2-console`
 - JDBC URL: `jdbc:h2:mem:testdb`
 - Username: `sa`
 - Password: `password`
 
----
-
-## 📌 Notes
-
-- The application uses an in-memory H2 database: all data is cleared on restart.
-- Great exercise to practice MVC architecture, validation, REST APIs, and testing.
-
----
-
-## 🧑‍💻 Author
-
-Ignasi Subirachs  
-Bootcamp Java — IT Academy Barcelona
-
----
-
-## 🔗 Useful Resources
-
-- [Spring Boot Documentation](https://docs.spring.io/spring-boot/)
-- [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
-- [H2 Console Guide](https://www.h2database.com/html/main.html)
-- [Java Bean Validation](https://jakarta.ee/specifications/bean-validation/)
