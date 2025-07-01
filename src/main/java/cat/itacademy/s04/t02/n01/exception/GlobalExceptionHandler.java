@@ -19,14 +19,19 @@ public class GlobalExceptionHandler {
 
     // 1. Field Validation
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Object> handleValidationErrors(MethodArgumentNotValidException ex) {
+        String message = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> error.getDefaultMessage() != null ? error.getDefaultMessage() : "Validation error")
+                .findFirst()
+                .orElse("Validation error");
+
+        Map<String, Object> error = new HashMap<>();
+        error.put("status", HttpStatus.BAD_REQUEST.value());
+        error.put("error", "Validation Error");
+        error.put("message", message);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     // Resource not found
