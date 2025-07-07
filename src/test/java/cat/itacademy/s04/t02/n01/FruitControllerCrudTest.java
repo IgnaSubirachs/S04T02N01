@@ -26,7 +26,7 @@ class FruitControllerCrudTest {
 
     @Test
     void testCreateAndGetAndUpdateAndDeleteFruit() throws Exception {
-        // Create
+
         FruitRequest createRequest = new FruitRequest("Melon", 20);
         String response = mockMvc.perform(post("/fruit/add")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -41,12 +41,12 @@ class FruitControllerCrudTest {
         FruitModel created = objectMapper.readValue(response, FruitModel.class);
         Long id = created.getId();
 
-        // Get by ID
+
         mockMvc.perform(get("/fruit/getOne/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Melon"));
 
-        // Update
+
         FruitRequest updateRequest = new FruitRequest("UpdatedMelon", 25);
         mockMvc.perform(put("/fruit/update/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -55,11 +55,11 @@ class FruitControllerCrudTest {
                 .andExpect(jsonPath("$.name").value("UpdatedMelon"))
                 .andExpect(jsonPath("$.kilogramQuantity").value(25));
 
-        // Delete
+
         mockMvc.perform(delete("/fruit/delete/" + id))
                 .andExpect(status().isOk());
 
-        // Get after delete
+
         mockMvc.perform(get("/fruit/getOne/" + id))
                 .andExpect(status().isNotFound());
     }
@@ -67,6 +67,7 @@ class FruitControllerCrudTest {
     @Test
     void testValidationError() throws Exception {
         FruitRequest invalid = new FruitRequest("", -1);
+
         mockMvc.perform(post("/fruit/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalid)))
@@ -74,6 +75,7 @@ class FruitControllerCrudTest {
                 .andExpect(jsonPath("$.name").value("Name can't be empty"))
                 .andExpect(jsonPath("$.kilogramQuantity").value("Kg must be positive"));
     }
+
 
     @Test
     void testUpdateNotFound() throws Exception {
@@ -88,7 +90,7 @@ class FruitControllerCrudTest {
     @Test
     void testDeleteNotFound() throws Exception {
         mockMvc.perform(delete("/fruit/delete/99999"))
-                .andExpect(status().isOk()) // Canviable a .isNotFound() si canvies el servei
+                .andExpect(status().isOk())
                 .andExpect(content().string(containsString("deleted")));
     }
 }
